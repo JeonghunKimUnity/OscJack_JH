@@ -1,20 +1,10 @@
 // OSC Jack - Open Sound Control plugin for Unity
 // https://github.com/keijiro/OscJack
 
-#if UNITY_EDITOR
-#define OSC_SERVER_LIST
-#endif
-
 using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-
-#if OSC_SERVER_LIST
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-[assembly:System.Runtime.CompilerServices.InternalsVisibleTo("OscJack.Editor")] 
-#endif
 
 namespace OscJack
 {
@@ -41,9 +31,6 @@ namespace OscJack
             _thread = new Thread(ServerLoop);
             _thread.Start();
 
-            #if OSC_SERVER_LIST
-            _servers.Add(this);
-            #endif
         }
 
         public void Dispose()
@@ -51,9 +38,6 @@ namespace OscJack
             Dispose(true);
             GC.SuppressFinalize(this);
 
-            #if OSC_SERVER_LIST
-            if (_servers != null) _servers.Remove(this);
-            #endif
         }
 
         #endregion
@@ -91,23 +75,6 @@ namespace OscJack
         #endregion
 
         #region For editor functionalities
-
-        #if OSC_SERVER_LIST
-
-        static List<OscServer> _servers = new List<OscServer>(8);
-        static ReadOnlyCollection<OscServer> _serversReadOnly;
-
-        internal static ReadOnlyCollection<OscServer> ServerList
-        {
-            get
-            {
-                if (_serversReadOnly == null)
-                    _serversReadOnly = new ReadOnlyCollection<OscServer>(_servers);
-                return _serversReadOnly;
-            }
-        }
-
-        #endif
 
         #endregion
 
